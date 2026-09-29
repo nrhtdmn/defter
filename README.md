@@ -2,6 +2,8 @@
 
 Telefonda kullanmak için tasarlanmış, modern ve çevrimdışı çalışan not PWA’sı.
 
+**Canlı:** [https://nrhtdmn.github.io/defter/](https://nrhtdmn.github.io/defter/)
+
 Veriler yalnızca cihazınızda (IndexedDB) saklanır. İnternet olmadan da çalışır.
 
 ## Özellikler
