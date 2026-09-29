@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
+  <meta name="theme-color" content="#1a2e24" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#f3efe6" media="(prefers-color-scheme: light)" />
+  <meta name="description" content="Defter — modern, çevrimdışı not uygulaması" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Defter" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" href="./icons/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./css/app.css" />
+  <title>Defter</title>
+</head>
+<body>
+  <div id="app">
+    <!-- Lock screen -->
+    <div id="lock-screen" class="lock-screen hidden" aria-hidden="true">
+      <div class="lock-card">
+        <div class="lock-mark" aria-hidden="true">✦</div>
+        <h1>Defter</h1>
+        <p>Devam etmek için PIN girin</p>
+        <div class="pin-dots" id="pin-dots"></div>
+        <div class="pin-pad" id="pin-pad"></div>
+        <button type="button" class="link-btn" id="pin-forgot">PIN’i sıfırla</button>
+      </div>
+    </div>
+
+    <!-- Sidebar / drawer -->
+    <aside id="drawer" class="drawer" aria-label="Menü">
+      <div class="drawer-brand">
+        <span class="brand-mark">✦</span>
+        <div>
+          <strong>Defter</strong>
+          <small>Notlarınız burada</small>
+        </div>
+      </div>
+      <nav class="drawer-nav" id="drawer-nav">
+        <button type="button" class="nav-item active" data-view="all">
+          <span class="nav-ico">◉</span> Tüm notlar <em id="count-all">0</em>
+        </button>
+        <button type="button" class="nav-item" data-view="pinned">
+          <span class="nav-ico">◎</span> Sabitlenenler <em id="count-pinned">0</em>
+        </button>
+        <button type="button" class="nav-item" data-view="favorites">
+          <span class="nav-ico">★</span> Favoriler <em id="count-fav">0</em>
+        </button>
+        <button type="button" class="nav-item" data-view="archive">
+          <span class="nav-ico">▤</span> Arşiv <em id="count-archive">0</em>
+        </button>
+        <button type="button" class="nav-item" data-view="trash">
+          <span class="nav-ico">⊘</span> Çöp kutusu <em id="count-trash">0</em>
+        </button>
+      </nav>
+      <div class="drawer-section">
+        <div class="section-head">
+          <span>Klasörler</span>
+          <button type="button" class="icon-btn sm" id="btn-add-folder" title="Klasör ekle">+</button>
+        </div>
+        <div id="folder-list" class="folder-list"></div>
+      </div>
+      <div class="drawer-section">
+        <div class="section-head"><span>Etiketler</span></div>
+        <div id="tag-cloud" class="tag-cloud"></div>
+      </div>
+      <div class="drawer-footer">
+        <button type="button" class="nav-item" id="btn-settings">
+          <span class="nav-ico">⚙</span> Ayarlar
+        </button>
+      </div>
+    </aside>
+    <div id="drawer-backdrop" class="drawer-backdrop" hidden></div>
+
+    <!-- Main shell -->
+    <main class="shell">
+      <header class="topbar">
+        <button type="button" class="icon-btn" id="btn-menu" aria-label="Menü">☰</button>
+        <div class="topbar-title">
+          <h1 id="view-title">Tüm notlar</h1>
+          <span id="view-sub" class="muted"></span>
+        </div>
+        <button type="button" class="icon-btn" id="btn-view-mode" aria-label="Görünüm" title="Liste / ızgara">▦</button>
+        <button type="button" class="icon-btn" id="btn-sort" aria-label="Sırala" title="Sırala">⇅</button>
+      </header>
+
+      <div class="search-bar">
+        <input type="search" id="search-input" placeholder="Notlarda ara…" autocomplete="off" enterkeyhint="search" />
+        <button type="button" class="chip" id="btn-filter-color" title="Renk filtresi">●</button>
+      </div>
+
+      <div id="notes-list" class="notes-list" role="list"></div>
+      <div id="empty-state" class="empty-state hidden">
+        <div class="empty-art" aria-hidden="true">✦</div>
+        <h2 id="empty-title">Henüz not yok</h2>
+        <p id="empty-text">İlk notunu yazmaya başla — fikirler burada büyüsün.</p>
+      </div>
+
+      <button type="button" class="fab" id="btn-new" aria-label="Yeni not">
+        <span>+</span>
+      </button>
+    </main>
+
+    <!-- Editor -->
+    <section id="editor" class="editor hidden" aria-label="Not editörü">
+      <header class="editor-bar">
+        <button type="button" class="icon-btn" id="btn-back" aria-label="Geri">←</button>
+        <div class="editor-actions">
+          <button type="button" class="icon-btn" id="btn-pin" aria-label="Sabitle" title="Sabitle">◎</button>
+          <button type="button" class="icon-btn" id="btn-fav" aria-label="Favori" title="Favori">★</button>
+          <button type="button" class="icon-btn" id="btn-more" aria-label="Diğer" title="Diğer">⋯</button>
+        </div>
+      </header>
+      <div class="editor-meta">
+        <input type="text" id="note-title" class="note-title" placeholder="Başlık" maxlength="200" />
+        <div class="meta-row">
+          <button type="button" class="meta-chip" id="btn-color" title="Renk">●</button>
+          <button type="button" class="meta-chip" id="btn-folder-pick" title="Klasör">Klasör</button>
+          <button type="button" class="meta-chip" id="btn-tags" title="Etiketler">Etiket</button>
+          <span id="note-stats" class="muted stats"></span>
+        </div>
+        <div id="note-tags-row" class="note-tags-row"></div>
+      </div>
+      <div class="toolbar" id="editor-toolbar">
+        <button type="button" data-md="bold" title="Kalın"><b>B</b></button>
+        <button type="button" data-md="italic" title="İtalik"><i>I</i></button>
+        <button type="button" data-md="h2" title="Başlık">H</button>
+        <button type="button" id="btn-ol" title="Numaralı madde">1)</button>
+        <button type="button" data-md="ul" title="Madde işareti">•</button>
+        <button type="button" data-md="check" title="Kontrol listesi">☑</button>
+        <button type="button" id="btn-indent" title="Alt madde">↳</button>
+        <button type="button" id="btn-outdent" title="Üst madde">↰</button>
+        <button type="button" data-md="quote" title="Alıntı">❝</button>
+        <button type="button" data-md="code" title="Kod">&lt;/&gt;</button>
+        <button type="button" id="btn-preview" title="Önizleme">👁</button>
+      </div>
+      <textarea id="note-body" class="note-body" placeholder="Bir şeyler yaz… Markdown desteklenir." spellcheck="true"></textarea>
+      <div id="note-preview" class="note-preview hidden prose"></div>
+      <div class="editor-footer">
+        <span id="save-status" class="muted">Kaydedildi</span>
+        <input type="datetime-local" id="reminder-input" class="reminder-input" title="Hatırlatıcı" />
+      </div>
+    </section>
+
+    <!-- Settings sheet -->
+    <section id="settings" class="sheet hidden" aria-label="Ayarlar">
+      <header class="sheet-bar">
+        <h2>Ayarlar</h2>
+        <button type="button" class="icon-btn" id="btn-settings-close" aria-label="Kapat">✕</button>
+      </header>
+      <div class="sheet-body">
+        <label class="setting-row">
+          <span>Tema</span>
+          <select id="setting-theme">
+            <option value="system">Sistem</option>
+            <option value="light">Açık</option>
+            <option value="dark">Koyu</option>
+          </select>
+        </label>
+        <label class="setting-row">
+          <span>Yazı boyutu</span>
+          <select id="setting-font">
+            <option value="sm">Küçük</option>
+            <option value="md">Orta</option>
+            <option value="lg">Büyük</option>
+          </select>
+        </label>
+        <label class="setting-row">
+          <span>Varsayılan görünüm</span>
+          <select id="setting-layout">
+            <option value="list">Liste</option>
+            <option value="grid">Izgara</option>
+          </select>
+        </label>
+        <label class="setting-row">
+          <span>Madde numarası</span>
+          <select id="setting-list-style">
+            <option value="paren">1) 2) 3)</option>
+            <option value="dot">1. 2. 3.</option>
+            <option value="alpha">a) b) c)</option>
+          </select>
+        </label>
+        <label class="setting-row">
+          <span>PIN kilidi</span>
+          <input type="checkbox" id="setting-pin-enabled" />
+        </label>
+        <div class="setting-row" id="pin-setup-row">
+          <span>PIN belirle (4 hane)</span>
+          <input type="password" id="setting-pin" inputmode="numeric" maxlength="4" pattern="[0-9]*" placeholder="····" />
+        </div>
+        <div class="setting-actions">
+          <button type="button" class="btn" id="btn-export">Dışa aktar (JSON)</button>
+          <button type="button" class="btn" id="btn-import">İçe aktar</button>
+          <input type="file" id="import-file" accept="application/json,.json" hidden />
+          <button type="button" class="btn" id="btn-export-md">Markdown indir</button>
+          <button type="button" class="btn danger" id="btn-empty-trash">Çöpü boşalt</button>
+          <button type="button" class="btn" id="btn-install" hidden>Ana ekrana ekle</button>
+        </div>
+        <p class="about muted">Defter v1.0 · Veriler yalnızca cihazınızda saklanır · Çevrimdışı çalışır</p>
+      </div>
+    </section>
+
+    <!-- Action sheet / menus -->
+    <div id="action-sheet" class="action-sheet hidden" role="dialog" aria-modal="true">
+      <div class="action-sheet-backdrop" id="action-backdrop"></div>
+      <div class="action-sheet-panel" id="action-panel"></div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  </div>
+
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>
