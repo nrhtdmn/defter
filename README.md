@@ -4,6 +4,8 @@ Telefonda kullanmak için tasarlanmış, modern ve çevrimdışı çalışan not
 
 **Canlı:** [https://nrhtdmn.github.io/defter/](https://nrhtdmn.github.io/defter/)
 
+Nurhat DUMAN tarafından üretilmiştir.
+
 Veriler yalnızca cihazınızda (IndexedDB) saklanır. İnternet olmadan da çalışır.
 
 ## Özellikler

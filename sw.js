@@ -1,4 +1,4 @@
-const CACHE = "defter-v2";
+const CACHE = "defter-v3";
 const ASSETS = [
   "./",
   "./index.html",

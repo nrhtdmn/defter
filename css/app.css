@@ -678,6 +678,32 @@ body::before {
 .btn:active { background: var(--accent-soft); }
 .btn.danger { color: var(--danger); }
 .about { margin-top: 24px; font-size: 0.82rem; line-height: 1.5; }
+.credit {
+  margin: 12px 0 0;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--ink-muted);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+.drawer-credit {
+  margin: 10px 12px 4px;
+  text-align: left;
+}
+.about-credit {
+  margin-top: 8px;
+}
+.shell-credit {
+  text-align: center;
+  margin: 28px 8px 8px;
+  padding-bottom: 8px;
+}
+.lock-card .credit {
+  margin-top: 20px;
+}
+.empty-state .credit {
+  margin-top: 20px;
+}
 
 /* Action sheet */
 .action-sheet {
